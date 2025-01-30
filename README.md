@@ -1,9 +1,10 @@
 # <img src="https://media.tenor.com/6ceOmdT7SHkAAAAi/emoji-emojis.gif" height=40 width=40> Learning Python <img src="https://media.tenor.com/6ceOmdT7SHkAAAAi/emoji-emojis.gif" height=40 width=40>
 
-| Contents                                  |
-| :---------------------------------------- |
-| [Exception Handling](#exception-handling) |
-| [OOPs in Python](#oops-in-python)         |
+| Contents                                            |
+| :-------------------------------------------------- |
+| [Exception Handling](#exception-handling)           |
+| [OOPs in Python](#oops-in-python)                   |
+| [Iterators and Iterables](#iterators-and-iterables) |
 
 ## Exception Handling
 
@@ -195,3 +196,63 @@ In this case, the MRO of class `C` is (`<class '__main__.C'>, <class '__main__.A
 Readings:
 
 - [Python Multiple Inheritance – Python MRO (Method Resolution Order)](https://data-flair.training/blogs/python-multiple-inheritance/)
+
+## Iterators and Iterables
+
+In Python, an **iterable** is any object capable of returning its members one at a time, allowing it to be iterated over in a for-loop. Common examples include lists, tuples, and strings. Simply put, _something that can be looped over._
+Also, remember, if an object has special method `__iter__` in it, then it is iterable (use `dir` to verify it).
+
+An **iterator** is an object representing a stream of data; it returns the data one element at a time. Iterators are implemented using two methods which together form the **_iterator protocol_**:
+
+- `__iter__()`: Returns the iterator object itself.
+- `__next__()`: Returns the next value from the iterator. If there are no more items to return, it raises a `StopIteration` exception.
+
+The `iter()` function is used to get an iterator from an iterable, and the `next()` function is used to manually iterate through the items.
+
+### Example of an Iterable
+
+```python
+my_list = [1, 2, 3]
+for item in my_list:
+    print(item)
+```
+
+### Example of an Iterator
+
+```python
+my_list = [1, 2, 3]
+iterator = iter(my_list)
+
+print(next(iterator))  # Output: 1
+print(next(iterator))  # Output: 2
+print(next(iterator))  # Output: 3
+# print(next(iterator))  # Raises StopIteration
+```
+
+### Creating a Custom Iterator
+
+```python
+class MyIterator:
+    def __init__(self, start, end):
+        self.current = start
+        self.end = end
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.current >= self.end:
+            raise StopIteration
+        else:
+            self.current += 1
+            return self.current - 1
+
+my_iter = MyIterator(1, 5)
+for num in my_iter:
+    print(num)
+```
+
+Readings:
+
+- [Iterators and Iterables (Official Docs)](https://docs.python.org/3/tutorial/classes.html#iterators)
+- [Iterator Types (Official Docs)](https://docs.python.org/3/library/stdtypes.html#typeiter)

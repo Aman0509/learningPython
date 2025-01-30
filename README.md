@@ -256,3 +256,62 @@ Readings:
 
 - [Iterators and Iterables (Official Docs)](https://docs.python.org/3/tutorial/classes.html#iterators)
 - [Iterator Types (Official Docs)](https://docs.python.org/3/library/stdtypes.html#typeiter)
+
+## Generator
+
+- Generators are a special class of functions that simplify the task of writing iterators. They allow you to declare a function that behaves like an iterator, i.e., it can be used in a for loop.
+
+- Generators are defined using the def keyword like a normal function, but they use the yield statement to return data
+
+- The yield statement pauses the function saving all its states and later continues from there on successive calls.
+
+- Generators are memory efficient because they generate items one at a time and only when required, unlike lists which load all items into memory. In short, generators are lazy.
+
+- Generators are useful for representing infinite sequences, such as data streams or large files, where you don’t want to load everything into memory at once.
+
+```python
+def count_up_to(max):
+    count = 1
+    while count <= max:
+        yield count
+        count += 1
+
+counter = count_up_to(5)
+print(counter)
+for num in counter:
+    print(num)
+
+# Output
+
+"""
+<generator object count_up_to at 0x7099e19d5900>
+1
+2
+3
+4
+5
+"""
+```
+
+### Generator Expression
+
+Similar to list comprehensions, but with parentheses instead of square brackets.
+
+```python
+my_generator = (x*x for x in range(5))
+for value in my_generator:
+    print(value)
+
+# Output
+"""
+0
+1
+4
+9
+16
+"""
+```
+
+Readings:
+
+- [How to Use Generators and yield in Python](https://realpython.com/introduction-to-python-generators/)

@@ -3,6 +3,7 @@
 | Contents                                  |
 | :---------------------------------------- |
 | [Exception Handling](#exception-handling) |
+| [OOPs in Python](#oops-in-python)         |
 
 ## Exception Handling
 
@@ -121,3 +122,76 @@ FileNotFoundError: [Errno 2] No such file or directory: 'config.json'
 Readings:
 
 - [Errors and Exceptions (Official Docs)](https://docs.python.org/3/tutorial/errors.html)
+
+## OOPs in Python
+
+### Method Resolution Order
+
+Check this [Stack Overflow](https://stackoverflow.com/a/62753514/12681221) answer to understand MRO.
+
+**Different Case**
+
+```python
+class A:
+    def __init__(self):
+        print("Before - I am in Class A")
+        super().__init__()
+        print("I am in class A")
+
+class B:
+    def __init__(self):
+        print("Before - I am in Class B")
+        super().__init__()
+        print("I am in class B")
+
+class C(A,B):
+    def __init__(self):
+        print("Before - I am in Class C")
+        super().__init__()
+        print("I am in class C")
+
+obj = C()
+print(C.__mro__)
+
+# Output
+
+"""
+Before - I am in Class C
+Before - I am in Class A
+Before - I am in Class B
+I am in class B
+I am in class A
+I am in class C
+(<class '__main__.C'>, <class '__main__.A'>, <class '__main__.B'>, <class 'object'>)
+"""
+```
+
+```mermaid
+graph BT
+    A[A] --"3"--> object[Object]
+    B[B] --"3"--> object
+
+    C[C] --"1"--> A
+    C[C] --"2"--> B
+```
+
+Explanation:
+
+1. ⁠When an instance of class `C` is created (`obj=C()`), it invokes the `__init__()` method of class `C`.
+2. Inside the `__init__()` method of class `C`, it first prints `Before - I am in class C`.
+3. Then, it calls `super().__init__()`, which invokes the `__init__()` method of the next class in the method resolution order (MRO) of class `C`, which is class `A`.
+4. ⁠Inside the `__init__()` method of class `A`, it prints `Before - I am in class A`.
+5. ⁠Then, it calls `super().__init__()`, which invokes the `__init__()` method of the next class in the MRO of class `C` (not class `A`), which is class `B`.
+6. ⁠Inside the `__init__()` method of class `B`, it prints `Before - I am in class B`.
+7. ⁠Then, it calls `super().__init__()`, which invokes the `__init__()` method of the next class in the MRO of class `C`, which is the built-in `object` class. Since `object` doesn't have an explicit `__init__()` method, it does nothing.
+8. ⁠After the `super().__init__()` call in class `B`, it prints `I am in class B`.
+9. The execution returns to class `A`, and after the `super().__init__()` call, it prints `I am in class A`.
+10. Finally, the execution returns to class `C`, and after the `super().__init__()` call, it prints `I am in class C`.
+
+The key point to understand is that when `super().__init__()` is called in class `A`, it doesn't transfer the execution to class `B` based on the inheritance between `A` and `B`. Instead, it looks at the MRO of the class where the instance is being created, which is class `C`. The MRO of class `C` determines the order in which the `super()` calls are resolved.
+
+In this case, the MRO of class `C` is (`<class '__main__.C'>, <class '__main__.A'>, <class '__main__.B'>, <class 'object'>`). So, when `super().__init__()` is called in class `A`, it transfers the execution to the next class in the MRO after `A`, which is class `B`.
+
+Readings:
+
+- [Python Multiple Inheritance – Python MRO (Method Resolution Order)](https://data-flair.training/blogs/python-multiple-inheritance/)

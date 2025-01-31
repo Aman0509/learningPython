@@ -196,9 +196,96 @@ The key point to understand is that when `super().__init__()` is called in class
 
 In this case, the MRO of class `C` is (`<class '__main__.C'>, <class '__main__.A'>, <class '__main__.B'>, <class 'object'>`). So, when `super().__init__()` is called in class `A`, it transfers the execution to the next class in the MRO after `A`, which is class `B`.
 
+### Metaclasses in Python
+
+A metaclass in Python is a class that defines how other classes behave. In simpler terms:
+
+- A class is an instance of a metaclass.
+- A metaclass controls the creation of classes, just like a class controls the creation of instances.
+
+By default, Python uses `type` as the metaclass. When you create a class, Python internally does:
+
+```python
+class MyClass:
+    pass
+
+# Internally, Python does:
+MyClass = type("MyClass", (), {})
+```
+
+#### Understanding type as a Metaclass
+
+Python’s built-in `type` is itself a metaclass because it creates new classes.
+
+```python
+# Creating a class dynamically using type
+MyClass = type("MyClass", (object,), {"x": 10})
+
+obj = MyClass()
+print(obj.x)  # Output: 10
+```
+
+- `"MyClass"` → Name of the class.
+- `(object,)` → Tuple of base classes (inheritance).
+- `{"x": 10}` → Class attributes.
+
+#### Creating a Custom Metaclass
+
+A custom metaclass allows us to modify how a class is created or initialized.
+
+```python
+class MyMeta(type):
+    def __new__(cls, name, bases, dct):
+        print(f"Creating class: {name}")
+        dct['z'] = 100  # Adding a new attribute to the class
+        return super().__new__(cls, name, bases, dct)
+
+# Using MyMeta as a metaclass
+class MyClass(metaclass=MyMeta):
+    x = 10
+    y = 20
+
+obj = MyClass()
+print(obj.z)  # Output: 100 (Added by metaclass)
+```
+
+**Explanation:**
+
+- `MyMeta` is a metaclass inheriting from `type`.
+- `__new__` method is called before `__init__`, modifying the class before creation.
+- The attribute `z = 100` is added dynamically before the class is created.
+- `MyClass` now has an extra attribute `z` even though it wasn't explicitly defined.
+
+#### When to Use Metaclasses?
+
+Metaclasses are useful for:
+
+- Modifying class attributes dynamically.
+- Enforcing coding standards (e.g., ensuring all class attributes are uppercase).
+- Implementing design pattern (ensuring only one instance of a class exists).
+
+**Example: Enforcing Class Naming Rules**
+
+```python
+class UpperCaseMeta(type):
+    def __new__(cls, name, bases, dct):
+        if not name.isupper():
+            raise TypeError("Class name must be uppercase!")
+        return super().__new__(cls, name, bases, dct)
+
+# This will raise an error
+class myClass(metaclass=UpperCaseMeta):
+    pass  # TypeError: Class name must be uppercase!
+
+# This is valid
+class MYCLASS(metaclass=UpperCaseMeta):
+    pass
+```
+
 Readings:
 
 - [Python Multiple Inheritance – Python MRO (Method Resolution Order)](https://data-flair.training/blogs/python-multiple-inheritance/)
+- [Expert Python Tutorial #3 - Metaclasses & How Classes Really Work](https://www.youtube.com/watch?v=NAQEj-c2CI8)
 
 ## Iterators and Iterables
 

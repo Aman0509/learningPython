@@ -7,6 +7,7 @@
 | [Iterators and Iterables](#iterators-and-iterables) |
 | [Generator](#generator)                             |
 | [Closures](#closures)                               |
+| [Decorators](#decorators)                           |
 
 ## Exception Handling
 
@@ -341,3 +342,171 @@ result = closure_function(10)  # inner_var = 10, outer_var = 5
 
 print(result)  # Output: 15
 ```
+
+## Decorators
+
+A decorator is a function that takes another function and extends its behavior without explicitly modifying it. Decorators are commonly used for logging, access control, instrumentation, caching, and more.
+
+### Basic Decorator
+
+```python
+def my_decorator(func):
+    def wrapper():
+        print("Something is happening before the function is called.")
+        func()
+        print("Something is happening after the function is called.")
+    return wrapper
+
+@my_decorator
+def say_hello():
+    print("Hello!")
+
+say_hello()
+
+# Output
+"""
+Something is happening before the function is called.
+Hello!
+Something is happening after the function is called.
+"""
+```
+
+```python
+def validate_doc_string(func):
+    def wrapper(*args, **kwargs):
+        if not func.__doc__:
+            raise ValueError(f"{func.__name__!r} does not have doc string")
+        func(*args, **kwargs)
+    return wrapper
+
+@validate_doc_string
+def clean_up(data, delimiter=";"):
+    return " ".join(data.split(delimiter))
+
+print(clean_up("This;is;not;good!"))
+
+# Output
+"""
+Traceback (most recent call last):
+  File "/home/main.py", line 12, in <module>
+    print(clean_up("This;is;not;good!"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/main.py", line 4, in wrapper
+    raise ValueError(f"{func.__name__!r} does not have doc string")
+ValueError: 'clean_up' does not have doc string
+"""
+```
+
+### Decorator with Arguments
+
+```python
+def repeat(num_times):
+    def decorator_repeat(func):
+        def wrapper(*args, **kwargs):
+            for _ in range(num_times):
+                result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator_repeat
+
+@repeat(num_times=3)
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Alice")
+
+# Output
+"""
+Hello, Alice!
+Hello, Alice!
+Hello, Alice!
+"""
+```
+
+### Class-based Decorator
+
+```python
+class CountCalls:
+    def __init__(self, func):
+        self.func = func
+        self.num_calls = 0
+
+    def __call__(self, *args, **kwargs):
+        self.num_calls += 1
+        print(f"Call {self.num_calls} of {self.func.__name__!r}")
+        return self.func(*args, **kwargs)
+
+@CountCalls
+def say_hello():
+    print("Hello!")
+
+say_hello()
+say_hello()
+
+# Output
+"""
+Call 1 of 'say_hello'
+Hello!
+Call 2 of 'say_hello'
+Hello!
+"""
+```
+
+### `functools.wraps` in Python
+
+When you create a decorator in Python, the inner function (wrapper) replaces the original function. This can cause issues because:
+
+- The name (`__name__)` of the original function is lost.
+- The docstring (`__doc__`) of the original function is lost.
+- The annotations and other metadata are lost.
+
+`functools.wraps` ensures that the wrapped function retains the metadata of the original function.
+
+**Example without `functools.wraps`**
+
+```python
+def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("Before function execution")
+        result = func(*args, **kwargs)
+        print("After function execution")
+        return result
+    return wrapper  # Returning wrapper function
+
+@my_decorator
+def my_function():
+    """This is my_function's docstring."""
+    print("Inside my_function")
+
+print(my_function.__name__)  # Output: wrapper (instead of 'my_function')
+print(my_function.__doc__)   # Output: None (instead of original docstring)
+```
+
+**Example with `functools.wraps`**
+
+```python
+import functools
+
+def my_decorator(func):
+    @functools.wraps(func)  # This preserves func's metadata
+    def wrapper(*args, **kwargs):
+        print("Before function execution")
+        result = func(*args, **kwargs)
+        print("After function execution")
+        return result
+    return wrapper  # Returning wrapper function
+
+@my_decorator
+def my_function():
+    """This is my_function's docstring."""
+    print("Inside my_function")
+
+print(my_function.__name__)  # Output: my_function
+print(my_function.__doc__)   # Output: This is my_function's docstring.
+```
+
+Readings:
+
+- [Python Decorators: A Step-by-Step Introduction](https://realpython.com/primer-on-python-decorators/)
+- [Decorators (Official Docs)](https://docs.python.org/3/glossary.html#term-decorator)
+- [Access to documentation of a decorated function? - Stack Overflow](https://stackoverflow.com/questions/68733352/access-to-documentation-of-a-decorated-function)

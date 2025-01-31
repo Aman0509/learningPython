@@ -5,6 +5,8 @@
 | [Exception Handling](#exception-handling)           |
 | [OOPs in Python](#oops-in-python)                   |
 | [Iterators and Iterables](#iterators-and-iterables) |
+| [Generator](#generator)                             |
+| [Closures](#closures)                               |
 
 ## Exception Handling
 
@@ -315,3 +317,27 @@ for value in my_generator:
 Readings:
 
 - [How to Use Generators and yield in Python](https://realpython.com/introduction-to-python-generators/)
+
+## Closures
+
+A closure is a function object that has access to variables in its enclosing [lexical scope](https://www.geeksforgeeks.org/why-is-lexical-scoping-important/), even after the scope has finished executing. In simple terms, a closure occurs when a function is defined inside another function and the inner function references variables from the outer function.
+
+A closure allows the inner function to "remember" the values of variables from the outer function even after the outer function has finished executing.
+
+```python
+def outer_function(outer_var):
+    # outer function variable
+    def inner_function(inner_var):
+        # inner function can access both outer and inner variables
+        return outer_var + inner_var
+
+    return inner_function  # returning inner function
+
+# Create a closure by calling outer_function
+closure_function = outer_function(5)
+
+# Call the returned inner function with an argument
+result = closure_function(10)  # inner_var = 10, outer_var = 5
+
+print(result)  # Output: 15
+```

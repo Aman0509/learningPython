@@ -9,6 +9,7 @@
 | [Generator](#generator)                             |
 | [Closures](#closures)                               |
 | [Decorators](#decorators)                           |
+| [Context Managers](#context-managers)               |
 
 ## Fundamentals
 
@@ -663,3 +664,74 @@ Readings:
 - [Python Decorators: A Step-by-Step Introduction](https://realpython.com/primer-on-python-decorators/)
 - [Decorators (Official Docs)](https://docs.python.org/3/glossary.html#term-decorator)
 - [Access to documentation of a decorated function? - Stack Overflow](https://stackoverflow.com/questions/68733352/access-to-documentation-of-a-decorated-function)
+
+## Context Managers
+
+A context manager in Python is a construct that allows you to manage resources efficiently using the `with` statement. It ensures that resources like files, network connections, or database connections are properly allocated and released when they are no longer needed.
+
+### Why Use Context Managers?
+
+- **Automatic resource management** – No need to explicitly close files or connections.
+- **Exception safety** – Ensures cleanup even if an error occurs.
+- **Improves code readability** – Eliminates boilerplate cleanup code.
+- **Avoiding Common Mistakes** - We can also used `try...except...finally` instead of context manager, however, when using `try...except...finally`, developers might:
+  - Forget to close resources.
+  - Accidentally close them in the wrong order.
+  - Introduce memory/resource leaks.
+- **Reusability & Custom Context Managers** - You can encapsulate complex resource management logic.
+
+### Creating a Custom Context Manager
+
+You can create a custom context manager using: - Class-based approach (using `__enter__` and `__exit__`) - Generator-based approach (using `contextlib.contextmanager`)
+
+**_Example: Class-based approach_**
+
+```python
+import time
+
+class LogManager:
+    def __init__(self, log_file):
+        self.log_file = log_file
+
+    def __enter__(self):
+        self.file = open(self.log_file, "a")  # Open file in append mode
+        self.file.write(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] Task Started\n")
+        return self.file  # Return file object for writing logs inside the `with` block
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.file.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Task Ended\n")
+        self.file.close()  # Ensure the file is closed properly
+
+# Usage
+with LogManager("log.txt") as log:
+    log.write("Processing data...\n")
+    time.sleep(2)  # Simulating some processing
+    log.write("Data processing completed.\n")
+```
+
+**_Example: Generator-based approach (using `contextlib.contextmanager`)_**
+
+```python
+import time
+from contextlib import contextmanager
+
+@contextmanager
+def log_manager(log_file):
+    file = open(log_file, "a")
+    file.write(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] Task Started\n")
+    try:
+        yield file  # Execution pauses here, allowing `with` block execution
+    finally:
+        file.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Task Ended\n")
+        file.close()  # Ensures the file is closed properly
+
+# Usage
+with log_manager("log.txt") as log:
+    log.write("Performing some operations...\n")
+    time.sleep(2)  # Simulating some work
+    log.write("Operations finished successfully.\n")
+```
+
+Readings:
+
+- [What Are Context Managers in Python?](https://www.freecodecamp.org/news/context-managers-in-python/)

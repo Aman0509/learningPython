@@ -2,12 +2,78 @@
 
 | Contents                                            |
 | :-------------------------------------------------- |
+| [Fundamentals](#fundamentals)                       |
 | [Exception Handling](#exception-handling)           |
 | [OOPs in Python](#oops-in-python)                   |
 | [Iterators and Iterables](#iterators-and-iterables) |
 | [Generator](#generator)                             |
 | [Closures](#closures)                               |
 | [Decorators](#decorators)                           |
+
+## Fundamentals
+
+### Walrus Operator
+
+The walrus operator (`:=`), **_introduced in Python 3.8_**, is an assignment expression that allows you to assign a value to a variable within an expression. It helps reduce redundancy and improves readability by allowing assignment and usage in a single line.
+
+**Syntax**
+
+```python
+variable := expression
+```
+
+where,
+
+- `:=` assigns the value of expression to variable and returns the value.
+- It can be used inside loops, conditions, and comprehensions.
+
+#### Basic Example
+
+```python
+if (n := len("Hello")) > 3:
+    print(f"Length is {n}")  # Output: Length is 5
+
+# n := len("Hello") assigns len("Hello") to n inside the if condition.
+# No need to calculate len("Hello") separately before the if condition
+```
+
+#### Using Walrus Operator in a While Loop
+
+```python
+# Without := (Traditional Way)
+
+data = input("Enter data: ")
+while data != "exit":
+    print(f"You entered: {data}")
+    data = input("Enter data: ")
+
+# With := (Using Walrus Operator)
+
+while (data := input("Enter data: ")) != "exit":
+    print(f"You entered: {data}")
+```
+
+#### Using `:=` in List Comprehensions
+
+```python
+# Without Walrus Operator
+numbers = [2, 4, 6, 8]
+squares = [x ** 2 for x in numbers if x ** 2 > 10]
+
+# With Walrus Operator
+numbers = [2, 4, 6, 8]
+squares = [square for x in numbers if (square := x ** 2) > 10] # Avoids recalculating x ** 2 twice.
+```
+
+#### Filtering and Processing Data
+
+```python
+numbers = [10, 20, 30, 40, 50]
+filtered = [num for num in numbers if (half := num // 2) > 10]
+print(filtered)  # Output: [30, 40, 50]
+
+# half := num // 2 assigns num // 2 and checks if it's greater than 10
+```
 
 ## Exception Handling
 

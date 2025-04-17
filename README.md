@@ -77,6 +77,97 @@ print(filtered)  # Output: [30, 40, 50]
 # half := num // 2 assigns num // 2 and checks if it's greater than 10
 ```
 
+### [`match-case`](https://docs.python.org/3/tutorial/controlflow.html#match-statements) in Python
+
+`match-case` is a structural pattern matching feature introduced in Python 3.10. It's similar to `switch-case` statements in other languages like C, Java, or JavaScript, but much more powerful.
+
+- `match-case` is more than `switch-case` — it supports complex pattern matching.
+- Works with strings, numbers, tuples, lists, dictionaries, and even custom classes.
+- Use `_` as the default/fallback case.
+
+**Syntax**
+
+```python
+match variable:
+    case pattern1:
+        # do something
+    case pattern2:
+        # do something else
+    case _:
+        # default case (like "else")
+```
+
+**Examples**
+
+```python
+# Basic Example
+def greet(language):
+    match language:
+        case "English":
+            print("Hello!")
+        case "French":
+            print("Bonjour!")
+        case "Spanish":
+            print("¡Hola!")
+        case _:
+            print("Language not supported.")
+
+greet("French")   # Output: Bonjour!
+```
+
+```python
+# Match with Tuples
+def point_position(point):
+    match point:
+        case (0, 0):
+            print("Origin")
+        case (0, y):
+            print("Y-axis")
+        case (x, 0):
+            print("X-axis")
+        case (x, y):
+            print(f"Point in plane at ({x}, {y})")
+
+point_position((0, 5))  # Output: Y-axis
+```
+
+```python
+# Match with Classes
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+def check_person(p):
+    match p:
+        case Person(name="Alice", age=30):
+            print("Matched Alice!")
+        case Person(name=name, age=age):
+            print(f"Person: {name}, Age: {age}")
+        case _:
+            print("Unknown")
+
+check_person(Person("Alice", 30))   # Output: Matched Alice!
+```
+
+```python
+# Match with Lists
+def list_match(lst):
+    match lst:
+        case []:
+            print("Empty list")
+        case [x]:
+            print(f"Single item: {x}")
+        case [x, y]:
+            print(f"Two items: {x} and {y}")
+        case [x, *rest]:
+            print(f"First: {x}, rest: {rest}")
+
+list_match([1, 2, 3])  # Output: First: 1, rest: [2, 3]
+```
+
+- [Python Switch Statement – Switch Case Example](https://www.freecodecamp.org/news/python-switch-statement-switch-case-example/)
+
 ## Exception Handling
 
 ```python

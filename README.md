@@ -737,6 +737,161 @@ Readings:
 
 - [What Are Context Managers in Python?](https://www.freecodecamp.org/news/context-managers-in-python/)
 
+## Multithreading & Multiprocessing in Python
+
+### CPU Cores
+
+A CPU core is a physical processing unit within the CPU. Modern CPUs are multi-core, meaning they contain multiple cores, allowing them to perform multiple tasks simultaneously.
+
+**Single-Core vs Multi-Core:**
+
+**Single-Core CPU:**
+
+- Older CPUs had only one core, so they could execute only one task (thread) at a time.
+- Task switching (multitasking) was achieved via time slicing, controlled by the operating system.
+
+**Multi-Core CPU:**
+
+- Modern CPUs have multiple cores, allowing them to execute multiple tasks (processes or threads) in parallel.
+- Example: A quad-core CPU can handle up to four tasks simultaneously.
+
+### Threads and Cores
+
+- A thread is the smallest unit of execution within a process.
+- A core can handle one or more threads at a time, depending on whether the CPU supports Simultaneous Multithreading (SMT) or Hyper-Threading (common in Intel CPUs). For instance, a quad-core CPU with Hyper-Threading can execute 8 threads simultaneously.
+
+### Physical Threads vs Software Threads
+
+In the context of computing and parallelism, the term thread refers to the smallest unit of execution that a CPU can handle. Threads can be classified into physical threads and software threads, and understanding the difference is key to grasping how modern CPUs and operating systems work.
+
+1. **Physical Threads**
+
+These are hardware-level threads supported directly by the CPU, also known as hardware threads. They represent the actual execution capability of a CPU core.
+
+**Key Characteristics:**
+
+- **Backed by Hardware**: Physical threads are tied to the CPU's cores and hardware capabilities, such as Simultaneous Multithreading (SMT) or Hyper-Threading.
+- **Execution Units**: A single CPU core can execute one or more physical threads at a time.
+  - For example, a 4-core CPU with Hyper-Threading can handle 8 physical threads, as each core can execute 2 threads concurrently.
+- Limited by CPU Design: The number of physical threads is fixed and depends on the CPU's architecture.
+
+**Example:**
+
+- A quad-core CPU without Hyper-Threading supports 4 physical threads.
+- A quad-core CPU with Hyper-Threading supports 8 physical threads (2 threads per core).
+
+**Use Case:**
+
+- Physical threads are the real hardware execution units where software instructions are processed. They enable true parallel execution of tasks.
+
+2. **Software Threads**
+
+These are logical threads managed by the operating system or runtime environment, also known as user-level threads. They represent units of execution in software that are scheduled onto physical threads.
+
+**Key Characteristics:**
+
+- **Managed by Software**: Software threads are created and managed by the operating system (e.g., POSIX threads) or programming frameworks (e.g., Python's threading module or Java's threads).
+- **Many-to-One Mapping**: Multiple software threads can be mapped onto a single physical thread. This is called time-slicing, where threads take turns executing on a physical thread.
+- **Concurrency vs Parallelism**: Software threads enable concurrency, but true parallelism depends on the availability of physical threads.
+  Lightweight: Creating software threads is cheaper than creating processes, as they share memory and resources with their parent process.
+
+**Example:**
+
+- In Python, when you use the threading module, you are creating software threads that the OS schedules onto the available physical threads.
+- A single-core CPU (with 1 physical thread) can execute 10 software threads, but only one will run at any given moment due to time-slicing.
+
+**Use Case:**
+
+- Software threads are commonly used in programming for tasks like handling multiple I/O requests, running background tasks, or breaking a program into smaller units of execution.
+
+## How They Work Together
+
+1. **Physical Threads**: Represent the actual execution capacity of the CPU.
+2. **Software Threads**: Represent tasks that are scheduled to run on those physical threads.
+
+For example:
+
+- If you have a CPU with 4 physical threads and create 10 software threads, only 4 software threads can execute simultaneously, while the others wait for their turn.
+- The OS scheduler switches between software threads (context switching), ensuring that all threads eventually get CPU time.
+
+### Multithreading
+
+Multithreading refers to running multiple threads (smaller units of a process) concurrently within the same process.
+
+- Threads share the same memory space.
+- Lightweight compared to processes.
+- Best suited for tasks that require parallel I/O operations, like reading/writing files, handling web requests, or managing a GUI.
+- **Example:** In a web server, multiple threads can handle multiple user requests concurrently.
+
+```python
+import threading
+import time
+
+def print_numbers():
+    for i in range(5):
+        print(f"Thread {threading.current_thread().name} prints {i}")
+        time.sleep(1)
+
+thread1 = threading.Thread(target=print_numbers, name="Thread1")
+thread2 = threading.Thread(target=print_numbers, name="Thread2")
+
+thread1.start()
+thread2.start()
+
+thread1.join()
+thread2.join()
+
+print("Done")
+```
+
+### Multiprocessing
+
+Multiprocessing involves running multiple processes concurrently, where each process has its own memory space.
+
+- Processes do not share memory; they communicate via mechanisms like pipes, queues, or shared memory.
+- Heavier compared to threads.
+- Best suited for CPU-intensive tasks, like performing mathematical computations or image processing.
+- **Example:** Running multiple calculations in parallel, such as processing large datasets or training machine learning models.
+
+```python
+from multiprocessing import Process
+import os
+
+def print_numbers():
+    for i in range(5):
+        print(f"Process {os.getpid()} prints {i}")
+
+if __name__ == "__main__":
+    process1 = Process(target=print_numbers)
+    process2 = Process(target=print_numbers)
+
+    process1.start()
+    process2.start()
+
+    process1.join()
+    process2.join()
+
+    print("Done")
+```
+
+| Aspect             | Multithreading                                                    | Multiprocessing                                                          |
+| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Execution Unit** | Multiple threads within a single process.                         | Multiple independent processes.                                          |
+| **Memory Usage**   | Threads share memory space.                                       | Each process has its own memory space.                                   |
+| **Overhead**       | Lightweight, lower overhead.                                      | Heavier, higher overhead.                                                |
+| **Use Case**       | Suitable for I/O-bound tasks (networking, file I/O).              | Suitable for CPU-bound tasks (data processing).                          |
+| **Concurrency**    | Achieved through thread context switching.                        | Achieved via separate processes running in parallel.                     |
+| **GIL in Python**  | Affected by the Global Interpreter Lock (One GIL for all threads) | Not affected by GIL; true parallelism is achieved. (One GIL per process) |
+
+Readings:
+
+- [CPU Cores VS Threads Explained](https://www.youtube.com/watch?v=hwTYDQ0zZOw)
+- [CPU Core and Thread Explained](https://www.youtube.com/watch?v=9iiyT9eJTLM)
+- [FANG Interview Question | Process vs Thread](https://www.youtube.com/watch?v=4rLW7zg21gI)
+- [The Python Global Interpreter Lock - Explained](https://www.youtube.com/watch?v=XVcRQ6T9RHo&t=157s)
+- [Python Multi Threading and Multi Processing](https://www.youtube.com/watch?v=BhnB45Rf3dg&list=PL_dsdStdDXbruQyokDHb5W1cJjLvJUlvI)
+- [Threading vs Multiprocessing in Python](https://www.youtube.com/watch?v=ecKWiaHCEKs)
+
 ## [`typing`](https://docs.python.org/3/library/typing.html) module in Python
 
 The typing module in Python provides support for **_type hints_**, which are **_annotations_** that indicate the expected data types of variables, function arguments, and return values. It helps developers write clearer, more maintainable, and bug-free code by making type expectations explicit.
@@ -865,16 +1020,16 @@ You can use tools like `mypy` to check for type violations:
 
 9. **Optional Type**
 
-    ```python
-    from typing import Optional
+   ```python
+   from typing import Optional
 
-    def find_user(user_id: int) -> Optional[str]:
-        if user_id == 1:
-            return "Alice"
-        return None
+   def find_user(user_id: int) -> Optional[str]:
+       if user_id == 1:
+           return "Alice"
+       return None
 
-    user = find_user(2)  # user can be either a string or None
-    ```
+   user = find_user(2)  # user can be either a string or None
+   ```
 
 10. **Sequence Type**
 

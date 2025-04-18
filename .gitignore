@@ -1,1 +1,11 @@
 .DS_Store
+
+venv/
+*.manifest
+*.spec
+.cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+.cache

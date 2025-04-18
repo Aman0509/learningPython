@@ -3,6 +3,7 @@
 | Contents                                            |
 | :-------------------------------------------------- |
 | [Fundamentals](#fundamentals)                       |
+| [help](#help)                                       |
 | [Exception Handling](#exception-handling)           |
 | [OOPs in Python](#oops-in-python)                   |
 | [Iterators and Iterables](#iterators-and-iterables) |
@@ -167,6 +168,91 @@ list_match([1, 2, 3])  # Output: First: 1, rest: [2, 3]
 ```
 
 - [Python Switch Statement – Switch Case Example](https://www.freecodecamp.org/news/python-switch-statement-switch-case-example/)
+
+## [`help()`](https://docs.python.org/3/library/functions.html#help)
+
+The `help()` function in Python is like your **built-in assistant** for understanding Python modules, functions, classes, and objects.
+
+**What is `help()`?**
+
+`help()` is a **built-in Python function** that displays **documentation** (docstrings) for:
+
+- Modules
+- Classes
+- Functions
+- Methods
+- Objects
+- Keywords
+
+**Syntax**
+
+```python
+help(object)
+```
+
+If you call it **without arguments**, it opens an **interactive help shell**:
+
+```python
+help()
+# (now you can type "list", "str", "modules", etc.)
+```
+
+**Examples**
+
+```python
+# Help on a built-in function
+help(len)
+
+# Output
+# Help on built-in function len in module builtins:
+#
+# len(obj, /)
+#     Return the number of items in a container.
+```
+
+```python
+# Help on a module
+import math
+help(math)
+
+# Output
+# Lists all available functions and constants in the `math` module with descriptions.
+```
+
+```python
+# Help on a user-defined class
+class Person:
+    """This class represents a person."""
+    def __init__(self, name):
+        """Initialize with name."""
+        self.name = name
+
+help(Person)
+
+# Output
+# Shows the class docstring, constructor info, etc.
+```
+
+```python
+# Interactive help() mode
+help()
+# Type "modules" to list modules, or "str" to get help on str, etc.
+# Type `quit` to exit help mode.
+```
+
+**Gotchas**
+
+- If an object doesn’t have a docstring, `help()` won’t show much.
+- It’s most useful when libraries or classes are well-documented.
+
+**Behind the scenes**
+
+- `help()` actually uses the `pydoc` module under the hood.
+- It pulls the docstrings (`""" """`) from the objects.
+
+> Tip:
+> Use it in REPL, not just in scripts.
+> In the Python shell or Jupyter notebook, `help()` is super handy when you forget what a function or module does.
 
 ## Exception Handling
 

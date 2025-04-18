@@ -12,6 +12,7 @@
 | [Decorators](#decorators)                           |
 | [Context Managers](#context-managers)               |
 | [Python Libraries](libraries/README.md)             |
+| [Development Tools](tools/README.md)                |
 
 ## Fundamentals
 

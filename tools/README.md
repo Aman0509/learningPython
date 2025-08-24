@@ -199,9 +199,9 @@ You can install uv in multiple ways:
 
    - On Windows (PowerShell):
 
-   ```bash
-   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-   ```
+      ```bash
+      powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+      ```
 
 2. **Via PyPI or pipx:**
 

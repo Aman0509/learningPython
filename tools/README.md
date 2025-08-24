@@ -3,6 +3,7 @@
 | Contents          |
 | :---------------- |
 | [Poetry](#poetry) |
+| [UV](#uv)         |
 
 ## [Poetry](https://python-poetry.org/docs/)
 
@@ -171,3 +172,184 @@ Readings:
 
 - [Stop Wasting Hours - Every Python Dev NEEDS to Master Poetry](https://www.youtube.com/watch?v=nrm8Lre-x_8)
 - [Python Poetry in 8 Minutes](https://www.youtube.com/watch?v=Ji2XDxmXSOM)
+
+## [UV](https://docs.astral.sh/uv/)
+
+- UV is an extremely fast Python package and project manager, written in Rust by Astral (the creators of the linter Ruff)
+- It consolidates many tools into one: it can replace pip, pip-tools, pipx, poetry, pyenv, twine, virtualenv, and more
+  - `pip` → for installing packages
+  - `venv / virtualenv` → for virtual environment creation/management
+  - `pip-tools` → for lock files and reproducible environments
+  - `pipx` → for installing & running Python-based CLI tools globally
+- Performance is a standout: 10–100× faster than pip, especially when using a warm cache; up to 115× faster in some benchmarks
+- Supports dependency management, virtual environments, Python version management, script execution, tool invocation, lockfiles, workspaces, and publishing workflows
+- Works across macOS, Linux, and Windows
+
+### [Installation](https://docs.astral.sh/uv/getting-started/installation/)
+
+You can install uv in multiple ways:
+
+1. **Standalone installer (recommended):**
+
+   - On macOs/Linux:
+
+     ```bash
+     curl -LsSf https://astral.sh/uv/install.sh | sh
+     ```
+
+   - On Windows (PowerShell):
+
+      ```bash
+      powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+      ```
+
+2. **Via PyPI or pipx:**
+
+   ```bash
+   pip install uv
+   pipx install uv
+   ```
+
+3. **Homebrew or Pacman (on macOS and Linux)**
+
+   ```bash
+   brew install uv
+   pacman -S uv
+   ```
+
+4. If installed via standalone, you can update itself via:
+
+   ```bash
+   uv self update
+   ```
+
+### [Create New Python Projects Using UV](https://docs.astral.sh/uv/concepts/projects/init/)
+
+Instead of manually creating dirs, virtual environments, and requirements files, UV automates everything.
+
+1. **Initialize a project (default: app):**
+
+   ```bash
+   uv init my_project
+   ```
+
+   This generates:
+
+   - `.git/` + `.gitignore` (Git repo initialized)
+   - `.python-version` (ensures consistent Python version)
+   - `pyproject.toml` (modern dependency management)
+   - `README.md` (empty template)
+   - `main.py` (starter file)
+
+2. **Project types:**
+
+   - `app` → (default) for applications, scripts, web servers
+   - `lib` → for libraries meant to be distributed as Python packages
+
+     usage:
+
+     ```bash
+     uv init my_project --app
+     # OR
+     uv init my_project --lib
+     ```
+
+3. **Adding dependencies:**
+
+   ```bash
+   uv add flask requests
+   ```
+
+   - Creates a virtual environment automatically (no manual `venv` or `activate`)
+   - Updates `pyproject.toml` and generates a `uv.lock` file
+
+4. Running code (without activating env manually):
+
+   ```bash
+   uv run main.py
+   ```
+
+   UV ensures the right interpreter + dependencies are used.
+
+### Add Existing Python Project to UV
+
+If you already have a project (say with `requirements.txt`):
+
+1. **Initialize with UV:**
+
+   ```bash
+   uv init
+   ```
+
+2. Import dependencies:
+
+   ```bash
+   uv add -r requirements.txt
+   ```
+
+3. UV converts them into `pyproject.toml` + `uv.lock`. At this point, `requirements.txt` can be removed since UV ensures reproducibility via the lock file.
+
+### UV CLI Commands (Commonly Used)
+
+#### Project & Dependencies
+
+- `uv init [name]` → create a new project
+- `uv add <pkg>` → add dependency (updates pyproject.toml & uv.lock)
+- `uv remove <pkg>` → remove dependency
+- `uv sync` → recreate env exactly from lock file
+- `uv tree` → show dependency tree
+
+#### Running Code
+
+- `uv run script.py` → run code inside project env (no manual activation)
+
+#### Virtual Environments
+
+- No need for `python -m venv` or `source venv/bin/activate` → UV does it automatically.
+- Even if `.venv` is deleted, `uv run` or `uv sync` recreates it instantly from lock file.
+
+#### Compatibility with Pip
+
+- `uv pip install <pkg>` → works like pip (good for gradual transition)
+- `uv pip list` → list installed packages
+- `uv pip freeze` → output dependencies like pip
+
+(But note: using uv pip skips the lockfile benefits — best to switch to native uv add workflow.)
+
+#### Tools (Pipx Replacement)
+
+- Install a global CLI tool:
+
+  ```bash
+  uv tool install ruff
+  ```
+
+- Run a tool temporarily (without installing):
+
+  ```bash
+  uv tool run ruff check
+  # or shorter alias
+  uvx ruff check
+  ```
+
+- List tools:
+
+  ```bash
+  uv tool list
+  ```
+
+- Remove tool:
+
+  ```bash
+  uv tool uninstall ruff
+  ```
+
+- Upgrade tools:
+
+  ```bash
+  uv tool upgrade --all
+  ```
+
+Readings:
+
+- [Python Tutorial: UV - A Faster, All-in-One Package Manager to Replace Pip and Venv](https://www.youtube.com/watch?v=AMdG7IjgSPM)
